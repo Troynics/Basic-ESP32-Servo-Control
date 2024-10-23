@@ -1,0 +1,28 @@
+import machine
+import time
+
+spin= machine.Pin(23, machine.Pin.OUT)
+pwm= machine.PWM(spin)
+pwm.init(freq=50)
+pwm.duty(26)
+
+
+def map(ma , fl, fh , tl, th):
+    return int((ma - fl) * (th-tl) / (fh - fl) + tl)
+
+while True:
+    user_cmd= (input('Enter Angle or Type Exit to quit '))
+    if user_cmd.upper() == 'EXIT':
+        print('closing servo control')
+        pwm.init(freq=50)
+        pwm.duty(26)
+        time.sleep(0.5)
+        break
+    angle= int(user_cmd)
+    if angle < 0 or angle >180:
+        raise ValueError('Angle no sup')
+    mt= map(angle, 0, 180, 26, 128)
+    pwm.duty(mt)
+    time.sleep(0.5)
+    
+pwm.deinit()
